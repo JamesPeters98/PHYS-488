@@ -1,0 +1,12 @@
+{
+  "C:\\Program Files\\Java\\jre1.8.0_current\\lib\\rt.jar": {
+    "location": "C:\\Program Files\\Java\\jre1.8.0_current\\lib\\rt.jar",
+    "status": "UNRESOLVED",
+    "error": "Could not transfer artifact jre:jre:zip:call:1.0.0 from/to remote-models (http://download.eclipse.org/recommenders/models/juno/): Error transferring file, server returned status code 307"
+  },
+  "M:\\Eclipse\\Task1\\src": {
+    "location": "M:\\Eclipse\\Task1\\src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027M:\\Eclipse\\Task1\\src\u0027. Skipped."
+  }
+}

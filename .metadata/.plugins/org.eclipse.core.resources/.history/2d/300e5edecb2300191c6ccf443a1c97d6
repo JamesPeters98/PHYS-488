@@ -1,0 +1,64 @@
+package uk.ac.liverpool.sgjpete2.fourvectors;
+
+import java.util.Scanner;
+
+public class FourVectorCalculations {
+	
+	static double lifetime = 2.19E-6;
+	static double magneticField = 1.8;
+    static Scanner keyboard = new Scanner(System.in);
+	
+    public static void main (String [] args )
+    {
+    	System.out.println("Enter the Energy and components of Momentum separately for particle 1 (E,px,py,pz)");
+		FourVector particle = new FourVector();
+		particle.E = keyboard.nextDouble();
+		particle.px = keyboard.nextDouble();
+		particle.py = keyboard.nextDouble();
+		particle.pz = keyboard.nextDouble();
+		
+		printVectorDetails(particle);
+		
+    	System.out.println("Enter the Energy and components of Momentum separately for particle 2 (E,px,py,pz)");
+		FourVector particle2 = new FourVector();
+		particle2.E = keyboard.nextDouble();
+		particle2.px = keyboard.nextDouble();
+		particle2.py = keyboard.nextDouble();
+		particle2.pz = keyboard.nextDouble();
+		
+		printVectorDetails(particle2);
+		
+		FourVector particle3 = addFourVectors(particle,particle2);
+		
+		printVectorDetails(particle3);
+    }
+    
+    static void printVectorDetails(FourVector particle){
+    	System.out.println("Particle with fourvector (E,px,py,pz) = ("
+				   + particle.E + ", "
+				   + particle.px + ", "
+				   + particle.py + ", "
+				   + particle.pz + ") GeV.");
+	
+		System.out.println("Momentum = " + particle.momentum() + " GeV");
+		System.out.println("Mass = " + particle.mass() + " GeV");
+		System.out.println("Lorentz Factor = " + particle.lorentzFactor());
+		System.out.println("Beta = " + particle.beta());
+		System.out.println("Velocity = " + particle.velocity()+" m/s");
+		System.out.println("Radius of Curvature = " + particle.radiusOfCurvature(magneticField)+" m");	
+		System.out.println("Distance travelled = "+particle.velocity()*lifetime+" m");
+		System.out.println("--------------------------");
+    }
+    
+    static FourVector addFourVectors(FourVector particle1, FourVector particle2){
+    	FourVector vector = new FourVector();
+    	
+    	vector.E = particle1.E+particle2.E;
+    	vector.px = particle1.px+particle2.px;
+    	vector.py = particle1.py+particle2.py;
+    	vector.pz = particle1.pz+particle2.pz;
+    	
+    	return vector;
+    }
+
+}

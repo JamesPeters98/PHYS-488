@@ -1,0 +1,47 @@
+package uk.ac.liverpool.sgjpete2.fourvectors;
+
+public class FourVectorCalculations {
+	
+	static double lifetime = 2.19E-6;
+	static double magneticField = 1.8;
+	
+    public static void main (String [] args )
+    {
+		FourVector particle = new FourVector();
+		particle.E = 1.0;
+		particle.px = 0.1;
+		particle.py = 0.0;
+		particle.pz = 0.9893;
+		
+		printVectorDetails(particle);
+		
+		FourVector particle2 = new FourVector();
+		particle2.E = 1.0;
+		particle2.px = 0.1;
+		particle2.py = 0.0;
+		particle2.pz = 0.9893;
+		
+		printVectorDetails(particle2);
+    }
+    
+    static void printVectorDetails(FourVector particle){
+    	System.out.println("Particle with fourvector (E,px,py,pz) = ("
+				   + particle.E + ", "
+				   + particle.px + ", "
+				   + particle.py + ", "
+				   + particle.pz + ") GeV.");
+	
+		System.out.println("Momentum = " + particle.momentum() + " GeV");
+		System.out.println("Mass = " + particle.mass() + " GeV");
+		System.out.println("Lorentz Factor = " + particle.lorentzFactor());
+		System.out.println("Beta = " + particle.beta());
+		System.out.println("Velocity = " + particle.velocity()+" m/s");
+		System.out.println("Radius of Curvature = " + particle.radiusOfCurvature(magneticField)+" m");	
+		System.out.println("Distance travelled = "+particle.velocity()*lifetime+" m");
+    }
+    
+    static FourVector addFourVectors(FourVector particle1, FourVector particle2){
+    	
+    }
+
+}
