@@ -23,12 +23,13 @@ class SimpleLoops
 	System.out.println("Hello.. try to guess the integer in the range 0 to 99 I'm thinking about");
 	System.out.println("Type in your first guess");
 
-	int yourGuess = -1;
+	int yourGuess;
 	int guesses = 0;
+	
+	//Have to ask for initial guess.
+	yourGuess = keyboard.nextInt();
 
 	while (yourGuess != answer) { // != means NOT EQUAL
-	    yourGuess = keyboard.nextInt();
-
 	    System.out.print(" No, your guess = " + yourGuess + " is not correct, try ");
 	    if (yourGuess < answer) {
 		System.out.println("higher");
@@ -37,6 +38,9 @@ class SimpleLoops
 	    }
 	    guesses++;
 	    System.out.println("Guesses: "+guesses);
+	    
+	    //Moved this line to bottom in so that the loop doesnt run if yourGuess is true.
+	    yourGuess = keyboard.nextInt();
 	}
 	System.out.println("Yes "+ answer + " is correct, at last you did it!");
     }
