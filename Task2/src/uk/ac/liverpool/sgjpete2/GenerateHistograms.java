@@ -23,7 +23,7 @@ class GenerateHistograms
     {       
 	// create an instance of the Class Histogram: 50 bins from 0.0 to 1.0
 	// this is for the flat distribution
-	Histogram hist = new Histogram(50, 0.3, 0.8, "Uniform");
+	Histogram hist = new Histogram(50, 0, 1, "Uniform");
 
 	System.out.println( "Input the number of random numbers to generate");
 	int trials = keyboard.nextInt();
@@ -33,6 +33,19 @@ class GenerateHistograms
 	}
 
 	hist.print();
-	hist.writeToDisk("test.csv");
+	hist.writeToDisk("uniform.csv");
+	
+	
+	//second histogram.
+	Histogram hist2 = new Histogram(50, 0, 12.0, "Normally Distributed");
+	for (int i = 0; i < trials; i++) {
+	    double value = addTwelve();
+	    hist2.fill(value);
+	}
+	
+	hist2.print();
+	hist2.writeToDisk("normalDist.csv");
+	
+	
     }
 }

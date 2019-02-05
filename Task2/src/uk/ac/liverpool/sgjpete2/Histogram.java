@@ -10,8 +10,9 @@ class Histogram
     private double[] binCentre;
     private String histname;
     
-    private int underflows;
-    private int overflows;
+    private int underflows = 0;
+    private int overflows = 0;
+    private int fills = 0;
 
     // double array to store the actual histogram data
     private double[] sumWeights;
@@ -45,11 +46,12 @@ class Histogram
     	// fid correct bin and add 1.
     	int ibin = (int) ( (value - binlow)/binwidth);
 	
-		if((ibin >= 0)&&(ibin < nbins)){
+		if((value >= binlow)&&(value <= binhigh)){
 			sumWeights[ibin] = sumWeights[ibin] + 1.0;
+			fills++;
 		} 
-		else if(ibin < 0){ underflows++; }
-		else if(ibin >= nbins){ overflows++; }
+		else if(value < binlow){ underflows++; }
+		else if(value > binhigh){ overflows++; }
     }
 
     public double getContent(int nbin) {
@@ -64,12 +66,14 @@ class Histogram
 
     public void print() {
 		System.out.println("Histogram " + histname);
+		
 		for (int bin = 0; bin < getNbins(); bin++) {
 		    System.out.println("Bin " + bin + " = " +getContent(bin)+" +/- "+getError(bin));
 		}
 		
 		System.out.println("Overflows: "+overflows);
 		System.out.println("Underflows: "+underflows);
+		System.out.println("Total fills: "+fills);
     }
     
     //-------------------------------------
