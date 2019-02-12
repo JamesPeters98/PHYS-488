@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=particleTracker
+comment0.text=\r\nContains\ Euler\ and\ Runge-Kutta\ 4th\ order\ integrator\ methods\r\n
+comment1.params=particle\ method\ Tmax\ N
+comment1.target=particleTracker(Particle,\ java.lang.String,\ double,\ int)
+comment2.params=
+comment2.target=Particle\ track()
+comment3.params=X
+comment3.target=double[]\ Bfield(double)
+comment4.params=
+comment4.target=void\ propogateParticle()
+numComments=5

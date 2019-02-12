@@ -23,7 +23,7 @@ class GenerateHistograms
     {       
 	// create an instance of the Class Histogram: 50 bins from 0.0 to 1.0
 	// this is for the flat distribution
-	Histogram hist = new Histogram(50, 0, 1, "Uniform");
+	Histogram hist = new Histogram(50, 0.3, 0.8, "Uniform");
 
 	System.out.println( "Input the number of random numbers to generate");
 	int trials = keyboard.nextInt();

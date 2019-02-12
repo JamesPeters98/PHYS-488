@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=RunSimulation
+comment1.params=args
+comment1.target=void\ main(java.lang.String[])
+comment2.params=filename\ p
+comment2.target=void\ DumpXYZ(java.lang.String,\ Particle)
+numComments=3

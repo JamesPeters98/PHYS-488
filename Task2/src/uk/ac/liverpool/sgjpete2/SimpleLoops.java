@@ -26,7 +26,7 @@ class SimpleLoops
 	int yourGuess;
 	int guesses = 0;
 	
-	//Have to ask for initial guess.
+	//Have to ask for an initial guess.
 	yourGuess = keyboard.nextInt();
 
 	while (yourGuess != answer) { // != means NOT EQUAL
@@ -42,6 +42,6 @@ class SimpleLoops
 	    //Moved this line to bottom in so that the loop doesnt run if yourGuess is true.
 	    yourGuess = keyboard.nextInt();
 	}
-	System.out.println("Yes "+ answer + " is correct, at last you did it!");
+	System.out.println("Yes "+ answer + " is correct, at last you did it! It took you "+guesses+" guesses.");
     }
 }

@@ -12,7 +12,7 @@ class SimpleArray
 		System.out.println("How many numbers do you want to store?");
 		int numberToStore = keyboard.nextInt();
 		
-		if(numberToStore != 0){
+		if(numberToStore > 0){
 			double [] myStore = new double [numberToStore]; 
 		
 			// create an array called 'myStore' in memory with this number of elements
