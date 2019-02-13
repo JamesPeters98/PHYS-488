@@ -33,6 +33,9 @@ public class LorentzForce {
 	     System.out.println("Momentum Unit Vector: x:"+P[0]+", y:"+ P[1]);
 	     
 	     System.out.println("Lorentz Factor: "+lorentzFactor());
+	     System.out.println("Energy: "+energy());
+	     System.out.println("Beta: "+beta());
+	     System.out.println("Velocity: "+beta()*c);
 	     
 	     calculateFinalState();
 	}
@@ -42,11 +45,11 @@ public class LorentzForce {
 		 x0[0] = 0;
 		 x0[1] = 0;
 		 
-	     p0[0] = 0.01;
-	     p0[1] = 0.01;
+	     p0[0] = 0.707;
+	     p0[1] = 0.707;
 		 
-	     dTime = 0.00000275;
-	     B = 1e-5;
+	     dTime = 0.5*(6.98e-8);
+	     B = 1;
 	}
 	
 	public static void createUnitVectors() {
@@ -68,8 +71,9 @@ public class LorentzForce {
 		
 		dAngle = ((q*B)/m)*dTime;
 		System.out.println("Change in Angle: "+dAngle);
-	    bendingRadius = meV*getAbsoluteMomentum()/(q*B);
-	    System.out.println("Initial P: " + meV*getAbsoluteMomentum()+" kg m/s");
+	    //bendingRadius = meV*getAbsoluteMomentum()/(q*B);
+		bendingRadius = 0.001*getAbsoluteMomentum()/(0.3*B);
+	    System.out.println("Initial P: " + getAbsoluteMomentum()+" MeV");
 	    System.out.println("Bending Radius: " + bendingRadius+ " m");
 	}
 	
@@ -81,9 +85,9 @@ public class LorentzForce {
 		System.out.println("Final pos: x: "+(x0[0]+x1[0])+" y: "+(x0[0]+x1[1]));
 		
 		//Calculate final momentum		
-		p1[0] = (lorentzFactor()*getAbsoluteMomentum())*(Math.sin(dAngle)*F[0]+Math.cos(dAngle)*P[0]);
-		p1[1] = (lorentzFactor()*getAbsoluteMomentum())*(Math.sin(dAngle)*F[1]+Math.cos(dAngle)*P[1]);
-		System.out.println("Final momentum: x: "+(p0[0]+p1[0])+" y: "+(p0[1]+p1[1]));
+		p1[0] = (lorentzFactor()*m_MeV*beta())*(Math.sin(dAngle)*F[0]+Math.cos(dAngle)*P[0]);
+		p1[1] = (lorentzFactor()*m_MeV*beta())*(Math.sin(dAngle)*F[1]+Math.cos(dAngle)*P[1]);
+		System.out.println("Final momentum: x: "+(p1[0])+" y: "+(p1[1]));
 		
 	}
 	
@@ -92,8 +96,15 @@ public class LorentzForce {
 	}
 	
 	public static double lorentzFactor() {
-		double a = Math.pow(meV*getAbsoluteMomentum()/(m*c),2);
-		return Math.sqrt(1 + a);
+		return 1/Math.sqrt(1 - (beta()*beta()));
+	}
+	
+	public static double beta() {
+		return getAbsoluteMomentum()/energy();	
+	}
+	
+	public static double energy() {
+		return Math.sqrt(m_MeV*m_MeV+getAbsoluteMomentum()*getAbsoluteMomentum());
 	}
 
 }
