@@ -8,24 +8,50 @@ class RunSimulation
     // It currently allows for Euler's method to be applied only. 
     
     public static void main (String [] args ) throws IOException
-    {
-        //create a single initial particle to track
+    {        
+        //task1();
+        task2_1();
+    }
+    
+    static void task1() throws IOException {
+    	
+    	//create a single initial particle to track
         double[] x0 = {0.,0.,0.,0.}; // position (m)
         double[] p0 = {10.,0.,0.}; // Momentum (MeV/c)
         Particle p = new Particle("electron", x0, p0, 0);
-        
-        
-        for(int i = 1; i <= 3; i++) {
+    	
+    	for(int i = 3; i <= 5; i++) {
 	        // create an instance of the particle tracker
 	        // usage: particleTracker(particle, time to track (s), number of time steps)
-	        particleTracker pt = new particleTracker(p, 10*(7e-10), (int) Math.pow(10, i));
+    		int pow = (int) Math.pow(10, i);
+	        particleTracker pt = new particleTracker(p, 10*(7e-10), pow);
 	        
 	        // run the simulation and get the particle tracking data
-	        Particle p1 = pt.track();
+	        Particle pEuler = pt.trackEuler();
+	        Particle pRK4 = pt.trackRK4();
 	        
 	        // save tracking data to disk
-	        DumpXYZ("output_"+i+"_RK4.csv", p1);
+	        DumpXYZ("outputs/task1/output_Euler_"+pow+".csv", pEuler);
+	        DumpXYZ("outputs/task1/output_RK4_"+pow+".csv", pRK4);
         }
+    }
+    
+    static void task2_1() throws IOException {
+    	//create a single initial particle to track
+        double[] x0 = {0.,0.,0.,0.}; // position (m)
+        double[] p0 = {10.,0.,0.}; // Momentum (MeV/c)
+        Particle p = new Particle("electron", x0, p0, 0);
+    	
+    	// create an instance of the particle tracker
+        // usage: particleTracker(particle, time to track (s), number of time steps)
+        particleTracker pt = new particleTracker(p, (5e-9), 100000);
+        pt.setBfieldLimit(0.2, 0.3);
+        
+        // run the simulation and get the particle tracking data
+        Particle p1 = pt.trackRK4();
+        
+        // save tracking data to disk
+        DumpXYZ("outputs/task2.1/output_task2.csv", p1);
     }
 
     static void DumpXYZ(String filename, Particle p) throws IOException

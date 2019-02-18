@@ -15,9 +15,9 @@ public class ElectronInMagneticField {
 	private double[] x1 = new double[2]; //final position (m)
 	private double[] p1 = new double[2]; //final momentum Mev/c
 	
-	private final double q = 1.60217662e-19; // elementary charge (Coulombs)
-	private final double m = 9.10938356e-31; // electron mass (kg)
-	private final double m_MeV = 0.511; // electron mass (MeV)
+	final double q = 1.60217662e-19; // elementary charge (Coulombs)
+	final double m = 9.10938356e-31; // electron mass (kg)
+	final double m_MeV = 0.511; // electron mass (MeV)
 	
 	private int Q = -1;
 		
@@ -42,7 +42,7 @@ public class ElectronInMagneticField {
 	}
 	
 	public void setup() {
-		dAngle = ((q*B)/m)*dTime;
+		dAngle = ((q*B)/m)*dTime/lorentzFactor();
 		bendingRadius = 0.001*getInitialAbsoluteMomentum()/(0.3*B);
 	}
 	
