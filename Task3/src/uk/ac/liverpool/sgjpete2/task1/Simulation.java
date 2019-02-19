@@ -36,9 +36,9 @@ public class Simulation {
 	static void testInputs() {
 		pos[0] = 0;
 		pos[1] = 0;
-		momentum[0] = 1000;
+		momentum[0] = 10;
 		momentum[1] = 0;
-		dT = 6.990972985041474E-8;
+		dT = (7.000093569066937E-10)/8;
 		B = 1;
 	}
 	
@@ -69,7 +69,7 @@ public class Simulation {
 		System.out.println("LorentzFactor: "+electron.lorentzFactor());
 		System.out.println("Final Absolute Momentum: "+electron.getFinalAbsoluteMomentum());
 		System.out.println("Predicted Time of Revolution: "+(electron.lorentzFactor()*(2*Math.PI*electron.m)/(electron.q*B)));
-		System.out.println("Predicted Time of Revolution (Relativity): "+((2*Math.PI*electron.getBendingRadius())/(electron.beta()*3e8))/electron.lorentzFactor());
+		System.out.println("Predicted Time of Revolution (Electrons Frame): "+((2*Math.PI*electron.getBendingRadius())/(electron.beta()*3e8))/electron.lorentzFactor());
 	}
 
 }
