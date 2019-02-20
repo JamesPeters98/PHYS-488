@@ -10,7 +10,8 @@ public class particleTracker {
 	 private Particle output;
 	 
 	 private double xLow = 0.2, xHigh = 0.3; //(m)
-	 private boolean useCustomBField = false;
+	 private double x0,y0,z0; //Scalar constants for BField gradient.
+	 private boolean useXLimits = false, useGradientField = false;
 	
 	 //Constants
 	 static final double c = 3e8; // speed of light in m/s
@@ -41,22 +42,38 @@ public class particleTracker {
 	 public void setBfieldLimit(double xLow, double xHigh) {
 		 this.xLow = xLow;
 		 this.xHigh = xHigh;
-		 this.useCustomBField = true;
+		 this.useXLimits = true;
+	 }
+	 
+	 public void useBfieldGradient(double x, double y, double z) {
+		 this.useGradientField = true;
+		 this.x0 = x;
+		 this.y0 = y;
+		 this.z0 = z;
 	 }
 	 
 	 public double[] Bfield(double x, double y, double z) {
 		 // define B-field in Tesla at position x, y, z
 	     double [] myBfield = new double[3];
 	     
-	     if((!useCustomBField)||((x>=xLow)&&(x<=xHigh))) {
-		     // a constant uniform field
-		     myBfield[0] = 0.;
-		     myBfield[1] = 0.;
-		     myBfield[2] = 1.;
-	     } else {
-	    	 myBfield[0] = 0.;
-		     myBfield[1] = 0.;
-		     myBfield[2] = 0.;
+	     //Default uniform field
+	     myBfield[0] = 0.;
+	     myBfield[1] = 0.;
+	     myBfield[2] = 1.;
+	     
+	     if(useXLimits){
+		     if(!((x>=xLow)&&(x<=xHigh))) {
+			     //If not in the x limits set zero field.
+			     myBfield[0] = 0.;
+			     myBfield[1] = 0.;
+			     myBfield[2] = 0.;
+		     }
+	     }
+	     
+	     if(useGradientField) {
+	    	 myBfield[0] = x*x0;
+		     myBfield[1] = y*y0;
+		     myBfield[2] = z*z0;
 	     }
 	
 	     return myBfield;

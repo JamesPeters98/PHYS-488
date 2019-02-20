@@ -10,8 +10,9 @@ class RunSimulation
     
     public static void main (String [] args ) throws IOException
     {        
-        task1();
+        //task1();
         //task2_1();
+        task2_2();
     }
     
     static void task1() throws IOException {
@@ -52,21 +53,61 @@ class RunSimulation
     }
     
     static void task2_1() throws IOException {
-    	//create a single initial particle to track
-        double[] x0 = {0.,0.,0.,0.}; // position (m)
-        double[] p0 = {10.,0.,0.}; // Momentum (MeV/c)
-        Particle p = new Particle("electron", x0, p0, 0);
+    	for(int px = 10; px <=50; px=px+20) {
+    		
+    		for(int i=-1; i<=1; i++) {
+	    		
+	    		//create a single initial particle to track
+	            double[] x0 = {0.,0.,0.,0.}; // position (m)
+	            double[] p0 = {px,0.,0.}; // Momentum (MeV/c)
+	            Particle p = new Particle("electron", x0, p0, 0);
+	            
+	            // -1 = 1/5, 0 = 1, 1 = 5
+	            double stepsModifier = Math.pow(5, i);
+	            int steps = (int) (20000*stepsModifier);
+	    		
+		    	// create an instance of the particle tracker
+		        // usage: particleTracker(particle, time to track (s), number of time steps)
+		        particleTracker pt = new particleTracker(p, (5e-9), steps);
+		        pt.setBfieldLimit(0.2, 0.3);
+		        
+		        // run the simulation and get the particle tracking data
+		        Particle p1 = pt.trackRK4();
+		        
+		        // save tracking data to disk
+		        DumpXYZ("outputs/task2.1/output_"+px+"_"+steps+".csv", p1);
+    		}
+        }
+    }
+    
+    static void task2_2() throws IOException {
     	
-    	// create an instance of the particle tracker
-        // usage: particleTracker(particle, time to track (s), number of time steps)
-        particleTracker pt = new particleTracker(p, (5e-9), 100000);
-        pt.setBfieldLimit(0.2, 0.3);
-        
-        // run the simulation and get the particle tracking data
-        Particle p1 = pt.trackRK4();
-        
-        // save tracking data to disk
-        DumpXYZ("outputs/task2.1/output_task2.1.csv", p1);
+    	double[] x1 = {0.,0.,0.,0.}; // position (m)
+    	double[] x2 = {0.,0.,0.01,0.}; // position (m)
+    	double[] x3 = {0.,0.,0.,0.01}; // position (m)
+    	
+    	double[][] x = new double[][]{x1,x2,x3};
+    	
+    	for(double[] x0 : x) {
+    		
+    		//create a single initial particle to track
+            double[] p0 = {10,0.,0.}; // Momentum (MeV/c)
+            Particle p = new Particle("electron", x0, p0, 0);
+    		
+	    	// create an instance of the particle tracker
+	        // usage: particleTracker(particle, time to track (s), number of time steps)
+	        particleTracker pt = new particleTracker(p, (5e-9), 100000);
+	        pt.useBfieldGradient(0, 1, 1);
+	        
+	        // run the simulation and get the particle tracking data
+	        Particle p1 = pt.trackRK4();
+	        
+	        // save tracking data to disk
+	        DumpXYZ("outputs/task2.2/output_("+x0[1]+","+x0[2]+","+x0[3]+").csv", p1);
+    		
+    	}
+	    		
+	    		
     }
 
     static void DumpXYZ(String filename, Particle p) throws IOException
