@@ -2,7 +2,7 @@ package uk.ac.liverpool.sgjpete2;
 
 import java.io.*;
 
-class Histogram
+public class Histogram
 {	
     private double binlow, binhigh;
     private double binwidth;
