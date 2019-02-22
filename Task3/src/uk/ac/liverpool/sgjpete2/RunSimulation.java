@@ -44,9 +44,7 @@ class RunSimulation
 	        DumpXYZ("outputs/task1/output_Euler_"+pow+".csv", pEuler);
 	        DumpXYZ("outputs/task1/output_RK4_"+pow+".csv", pRK4);
     	}
-    	
-    	System.out.println(Arrays.toString(eulerXY[0]));
-    	
+    	    	
         // save tracking data to disk
         DumpXYZ("outputs/task1/output_Euler_FinalStates.csv", eulerXY);
         DumpXYZ("outputs/task1/output_RK4_FinalStates.csv", rk4XY);
@@ -96,8 +94,8 @@ class RunSimulation
     		
 	    	// create an instance of the particle tracker
 	        // usage: particleTracker(particle, time to track (s), number of time steps)
-	        particleTracker pt = new particleTracker(p, (5e-9), 100000);
-	        pt.useBfieldGradient(0, 1, 1);
+	        particleTracker pt = new particleTracker(p, (5e-9), 1000000);
+	        //pt.useBfieldGradient(0, 1, 1);
 	        
 	        // run the simulation and get the particle tracking data
 	        Particle p1 = pt.trackRK4();

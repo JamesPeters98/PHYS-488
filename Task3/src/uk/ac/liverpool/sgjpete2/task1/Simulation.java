@@ -12,8 +12,8 @@ public class Simulation {
 	static double B;
 	
 	public static void main(String[] args) {
-		//readInput();
-		testInputs();
+		readInput();
+		//testInputs();
 		ElectronInMagneticField electron = new ElectronInMagneticField(pos, momentum, dT, B);
 		printInitialState(electron);
 		printFinalState(electron);

@@ -59,7 +59,7 @@ public class particleTracker {
 	     //Default uniform field
 	     myBfield[0] = 0.;
 	     myBfield[1] = 0.;
-	     myBfield[2] = 1.;
+	     myBfield[2] = 0.;
 	     
 	     if(useXLimits){
 		     if(!((x>=xLow)&&(x<=xHigh))) {
