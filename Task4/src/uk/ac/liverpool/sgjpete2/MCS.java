@@ -16,6 +16,7 @@ public class MCS {
 		return 0.01*(716.3*A)/(p*Z*(Z+1)*Math.log(287/Math.sqrt(Z)));
 	}
 	
+	//returns theta-0 in radians.
 	public double getTheta0(Particle particle) {
 		if(Z==0) return 0;
 		
@@ -25,11 +26,8 @@ public class MCS {
 		double X0 = getX0();
 		int z = particle.getCharge();
 		
-		double t = Math.abs((13.6/(B*mom))*z*Math.sqrt(x/X0)*(1+0.038*Math.log(x/X0)));
-		
-		
-		
-		return t;
+		return Math.abs((13.6/(B*mom))*z*Math.sqrt(x/X0)*(1+0.038*Math.log(x/X0)));
+
 	}
 
 }
