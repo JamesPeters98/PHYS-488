@@ -61,7 +61,7 @@ public class particleTracker
 		    //System.out.println("In volume " + lastVolume);
 
 		    if (!Experiment.isInVolume(output, 0)) {
-				System.out.println("Particle left the world, done.");
+				//System.out.println("Particle left the world, done.");
 				output.print();
 				break;
 		    }

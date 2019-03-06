@@ -20,13 +20,18 @@ public class MCS {
 	public double getTheta0(Particle particle) {
 		if(Z==0) return 0;
 		
-		double x = particle.getLastX();
+		double x = particle.getLastZ();
 		double B = particle.getBeta();
 		double mom = particle.getLastMomentumMag();
 		double X0 = getX0();
 		int z = particle.getCharge();
 		
-		return Math.abs((13.6/(B*mom))*z*Math.sqrt(x/X0)*(1+0.038*Math.log(x/X0)));
+		double t = Math.abs((13.6/(B*mom))*z*Math.sqrt(x/X0)*(1+0.038*Math.log(x/X0)));
+		
+		if(x==0) t = 0;
+		//System.out.println("Theta: "+t+", x:"+x+", B:"+B+", mom:"+mom+", X0:"+X0);
+		
+		return t;
 
 	}
 

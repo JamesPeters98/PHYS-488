@@ -3,9 +3,10 @@ package uk.ac.liverpool.sgjpete2;
 import java.io.*;
 import java.util.Scanner;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 
-class RunSimulation
+class RunSimulation_MuonDistances
 {
     // Program to run a simulation of particles in a simple "experiment"
 
@@ -72,11 +73,21 @@ class RunSimulation
 //	System.out.println("Type in the number of events to simulate [e.g. 1000]");
 //    int numberOfEvents = keyboard.nextInt();
 	
-	double startMomentum = 154.1;
+	
 	double startAngle = 0;
 	double simTime = 1e-7;
 	double ironThickness = 0.05;
-	double numberOfEvents = 1000;
+	int numberOfEvents = 2000;
+	
+	double startMom = 154;
+	double endMom = 155;
+	double spacing = 0.1;
+	
+	int range = (int) ((endMom-startMom)/spacing) + 1;
+	int[] det1 = new int[range];
+	
+	System.out.println("Simulating range of momentums from "+startMom+" MeV to "+endMom+" MeV in intervals of "+spacing+" MeV");
+	System.out.println("Total Simulated Events = "+(range*numberOfEvents));
 
 	// Define the genotrical properties of the experiment
 	Geometry Experiment = SetupExperiment(ironThickness);
@@ -84,134 +95,79 @@ class RunSimulation
 	// initial time and x,y,z position (m) of particles
 	double[] pos0 = {0., 0., 0., 0.};
 
-	// setup histograms for analysis
-	Histogram gen_startMom = new Histogram(50, 0., startMomentum*1.01, "initial generated Momentum");
-	Histogram sim_endMom = new Histogram(50, 0., startMomentum*1.01, "simulated final Momentum");
-
-	Histogram gen_startTheta = new Histogram(100, 0, startAngle+0.6, "initial generated Theta");
-	Histogram sim_endTheta = new Histogram(100, 0, startAngle+0.6, "simulated final Theta");
-	Histogram det_endTheta1 = new Histogram(100, -Math.PI, Math.PI, "measured final Theta Det1");
-	Histogram det_endTheta2 = new Histogram(100, 0, startAngle+0.6, "measured final Theta Det2");
-
 
 	// start of main loop: run the simulation numberOfEvents times
-	for (int nev = 0; nev < numberOfEvents; nev++) {
+	for(double mom = startMom; mom <= endMom; mom+=spacing) {
+		
+		for (int nev = 0; nev < numberOfEvents; nev++) {
+	
+		    if (nev % 1000 == 0) {
+			//System.out.println("Simulating event " + nev);
+		    }
+	
+		    // get the particles of the event to simulate
+		    Particle [] Particles_gen = GetParticles(pos0, mom, startAngle);
+		    
+		    // simulate propagation of each generated particle,
+		    // store output in Particles_sim
+		    Particle [] Particles_sim = new Particle[Particles_gen.length];
+		    
+		    for (int ip = 0; ip < Particles_gen.length; ip++) {
+			// create an instance of the particle tracker
+			// usage: particleTracker(particle, time to track (s), number of time steps)
+			particleTracker tracker = new particleTracker(Particles_gen[ip], simTime, numSteps);
+	
+			// some output (need to disable before running large numbers of events!)
+			//System.out.println("Simulating particle " + ip + " of event " + nev);
+			//Particles_gen[ip].print();
+	
+			Particles_sim[ip] = tracker.track(Experiment);
+		    }
+		    // end of simulated particle propagation
+		    
+		    // simulate detection of each particle in each element
+		    Particle [] Particles_det = Experiment.detectParticles(Particles_sim);
+	
+		    // this is just for dumping the simulation to the screen
+		    for (int ip = 0; ip < Particles_sim.length; ip++) {
+		    	for (int idet = 1; idet < Experiment.getNshapes(); idet++) {
+			    double [] txyz = Particles_det[ip].getPosition(idet);
+		    	    //System.out.println("Particle " + ip + " detection in volume " + idet);
+	//	    	    System.out.println("[t,x,y,z] = [" + txyz[0] + ", " + txyz[1] + ", " +
+	//		    		       txyz[2] + ", " + txyz[3] + "]");
+		    	}
+		    }
+		    // end of simulated particle detection
+	
+		    // after detection: uses initial position (assumed to be known with pos0) and detected positions
+		    // the first detector has volume number 2 (see printout)
+		    
+		    int momI = (int) ((int) (mom-startMom)/spacing);
+		    
+		    double [] det_pos = Particles_det[0].getPosition(2);
+		    
+		    double smear = 0.01;
+		    double s = smear(0.01);
 
-	    if (nev % 1000 == 0) {
-		System.out.println("Simulating event " + nev);
-	    }
+		    double det1Theta = Math.acos(((s+det_pos[3])-pos0[3])/
+					 Math.sqrt(Math.pow((s+det_pos[1])-pos0[1], 2)
+						   +Math.pow((s+det_pos[2])-pos0[2], 2)
+						   +Math.pow((s+det_pos[3])-pos0[3], 2)));
+	 	    
+	 	   if((det1Theta < (Math.PI/4)) && (det1Theta > (-Math.PI/4))) { det1[momI]++;}
 
-	    // get the particles of the event to simulate
-	    Particle [] Particles_gen = GetParticles(pos0, startMomentum, startAngle);
-	    
-	    // simulate propagation of each generated particle,
-	    // store output in Particles_sim
-	    Particle [] Particles_sim = new Particle[Particles_gen.length];
-	    
-	    for (int ip = 0; ip < Particles_gen.length; ip++) {
-		// create an instance of the particle tracker
-		// usage: particleTracker(particle, time to track (s), number of time steps)
-		particleTracker tracker = new particleTracker(Particles_gen[ip], simTime, numSteps);
-
-		// some output (need to disable before running large numbers of events!)
-		//System.out.println("Simulating particle " + ip + " of event " + nev);
-		//Particles_gen[ip].print();
-
-		Particles_sim[ip] = tracker.track(Experiment);
-	    }
-	    // end of simulated particle propagation
-
-	    
-	    // write scatter plot for event 0, particle to disk into file "sample.csv"
-	    if (nev == 0) {
-	    	Particles_sim[0].DumpTXYZPxPyPz("outputs/sample.csv");
-	    }
-	    
-	    // simulate detection of each particle in each element
-	    Particle [] Particles_det = Experiment.detectParticles(Particles_sim);
-
-	    // this is just for dumping the simulation to the screen
-	    for (int ip = 0; ip < Particles_sim.length; ip++) {
-	    	for (int idet = 1; idet < Experiment.getNshapes(); idet++) {
-		    double [] txyz = Particles_det[ip].getPosition(idet);
-	    	    //System.out.println("Particle " + ip + " detection in volume " + idet);
-//	    	    System.out.println("[t,x,y,z] = [" + txyz[0] + ", " + txyz[1] + ", " +
-//		    		       txyz[2] + ", " + txyz[3] + "]");
-	    	}
-	    }
-	    // end of simulated particle detection
-
-
-	    
-	    // analyse event (= 1 particle) and fill histograms
-	    // this is to show, how to access the variables
-	    // and do some calculations with the results of the simulation
-
-	    // retrieve initial generated particle momentum
-	    double [] gen_mom = Particles_gen[0].getLastMomentum();
-	    double gen_mommag = Math.sqrt(gen_mom[0]*gen_mom[0]+gen_mom[1]*gen_mom[1]
-					  +gen_mom[2]*gen_mom[2]);
-
-	    // retrieve simulated particle position and momentum at the end of the simulation
-	    double [] sim_mom = Particles_sim[0].getLastMomentum();
-	    double sim_mommag = Math.sqrt(sim_mom[0]*sim_mom[0]+sim_mom[1]*sim_mom[1]
-					  +sim_mom[2]*sim_mom[2]);
-	    double [] sim_pos = Particles_sim[0].getLastPosition();
-	    
-	    // fill histograms
-	    gen_startMom.fill(gen_mommag);
-	    sim_endMom.fill(sim_mommag);
-
-	    // calculate theta angles, defined here as angle w.r.t. the z-plane
-	    // theta ~ acos(Z/sqrt(X^2+Y^2+Z^2))
-
-	    // generated - this should be equal to startAngle given at the start
-	    double gen_Theta = Math.acos(gen_mom[2]/gen_mommag);
-	    gen_startTheta.fill(gen_Theta);
-
-	    // after simulation - muon will have scattered around a bit
-	    double sim_Theta = Math.acos(sim_mom[2]/sim_mommag);
-	    
-	    sim_endTheta.fill(sim_Theta);
-
-	    // after detection: uses initial position (assumed to be known with pos0) and detected positions
-	    // the first detector has volume number 2 (see printout)
-	    
-	    double [] det_pos = Particles_det[0].getPosition(2);
-	    
-	    double smear = 0.01;
-	    double s = smear(0.01);
-
-	    double det1Theta = Math.acos(((s+det_pos[3])-pos0[3])/
-				 Math.sqrt(Math.pow((s+det_pos[1])-pos0[1], 2)
-					   +Math.pow((s+det_pos[2])-pos0[2], 2)
-					   +Math.pow((s+det_pos[3])-pos0[3], 2)));
- 	    
-	    System.out.println("Theta: "+det1Theta);
- 	   if(!Double.isNaN(det1Theta)) { det_endTheta1.fill(det1Theta);}
- 	   else System.out.println("NaN "+Arrays.toString(det_pos)+" : "+det1Theta+" : ");
-
-	    // the second detector has volume number 3 (see printout)
-	    det_pos = Particles_det[0].getPosition(3);
-	    double det2Theta = Math.acos((det_pos[3]-pos0[3])/
-				 Math.sqrt(Math.pow(det_pos[1]-pos0[1], 2)
-					   +Math.pow(det_pos[2]-pos0[2], 2)
-					   +Math.pow(det_pos[3]-pos0[3], 2)));
- 	    
-  	   if(!Double.isNaN(det2Theta)) det_endTheta2.fill(det2Theta);
-	    // end of analysis
-
+		}
 	}
+	
+	System.out.println("-------------");
+	for(int i = 0; i < det1.length; i++) {
+		int counts = det1[i];
+		double mom = startMom + (i*spacing);
+		System.out.println("Det1 - Mom("+mom+"MeV) "+counts);
+	}
+	
 	// end of main event loop
 
-	// write out histograms for plotting and futher analysis
-	gen_startMom.writeToDisk("outputs/gen_startP.csv");
-	sim_endMom.writeToDisk("outputs/sim_endP.csv");
-	
-	gen_startTheta.writeToDisk("outputs/gen_startTheta.csv");
-	sim_endTheta.writeToDisk("outputs/sim_endTheta.csv");
-	det_endTheta1.writeToDisk("outputs/det_endTheta1.csv");
-	det_endTheta2.writeToDisk("outputs/det_endTheta2.csv");
     }
     
     public static double smear(double resolution) {

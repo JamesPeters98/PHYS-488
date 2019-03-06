@@ -72,7 +72,6 @@ class Geometry
 	rho_Z_A[nshapes][2] = A;
 
 
-	// CHECK HERE: make sure this works or adjust
 	Eloss[nshapes] = new EnergyLoss(rho, Z, A);
 	MultScatter[nshapes] = new MCS(rho, Z, A);
 
@@ -148,9 +147,7 @@ class Geometry
 	return getVolume(txyz[1], txyz[2], txyz[3]);
     }
     
-    public void doEloss(Particle p){
-		// CHECK AND COMPLETE HERE
-	
+    public void doEloss(Particle p){	
 		// dist gives the length of the last step
 		double dist = p.getLastDistance();
 		// determine which volume we are in
